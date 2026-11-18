@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#174b91"><title>Maïsam Shop</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root{--blue:#174b91;--orange:#f28b24;--ink:#172033;--muted:#667085;--bg:#f4f6fa}
+*{box-sizing:border-box}body{margin:0;font:15px system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,var(--blue),#0d3268);color:white;padding:18px 16px 20px;border-radius:0 0 22px 22px}
+.brand{font-size:25px;font-weight:900;letter-spacing:.4px}.brand span{color:#ffb45f}.tag{font-size:12px;opacity:.9}
+.wrap{max-width:760px;margin:auto;padding:14px}.toolbar{display:flex;gap:8px;margin:12px 0}
+input,select,textarea,button{font:inherit}input,select,textarea{width:100%;padding:12px;border:1px solid #d7dce5;border-radius:11px;background:white}
+button{border:0;border-radius:11px;padding:11px 14px;background:var(--blue);color:white;font-weight:700;cursor:pointer}
+button.alt{background:#fff;color:var(--blue);border:1px solid #cbd5e1}button.orange{background:var(--orange);color:#241506}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card,.panel{background:white;border-radius:15px;padding:12px;box-shadow:0 2px 10px #14213b0b}
+.photo{height:112px;background:#eef2f8;border-radius:10px;display:grid;place-items:center;color:#8491a5;font-size:34px}
+.name{font-weight:750;margin:9px 0 4px}.price{font-weight:800;color:var(--blue)}.muted{color:var(--muted);font-size:12px}
+.actions{display:flex;gap:7px;margin-top:9px}.actions button{flex:1;padding:9px 6px;font-size:13px}
+nav{position:sticky;bottom:0;background:#fff;padding:10px;display:flex;gap:8px;box-shadow:0 -3px 15px #14213b10}
+nav button{flex:1;font-size:13px}.hidden{display:none!important}h2{font-size:19px;margin:8px 0 12px}
+label{display:block;font-weight:650;font-size:13px;margin:10px 0 5px}.row{display:flex;gap:8px}.row>*{flex:1}
+.item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #edf0f4}
+.notice{background:#fff5e8;border:1px solid #ffdfb5;padding:10px;border-radius:10px;font-size:12px;margin:10px 0}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">MAÏSAM <span>SHOP</span></div><div class="tag">LA QUALITÉ • Votre boutique électronique</div></div></header>
+<main class="wrap">
+<section id="shop">
+  <div class="toolbar"><input id="search" placeholder="Rechercher un produit…" oninput="renderProducts()"><button onclick="show('cart')">Panier <b id="count">0</b></button></div>
+  <div class="row"><select id="category" onchange="renderProducts()"><option value="">Toutes les catégories</option></select><button class="alt" onclick="show('contact')">Contact</button></div>
+  <h2>Nos produits</h2><div id="products" class="grid"></div>
+</section>
+<section id="cart" class="hidden"><h2>Mon panier</h2><div class="panel" id="cartlines"></div><p id="total"></p><button onclick="show('checkout')">Continuer la commande</button> <button class="alt" onclick="show('shop')">Continuer mes achats</button></section>
+<section id="checkout" class="hidden"><h2>Informations de livraison</h2><div class="panel">
+<label>Nom complet</label><input id="customer" placeholder="Votre nom">
+<label>Téléphone</label><input id="phone" placeholder="+224…">
+<label>Ville / préfecture</label><input id="city" placeholder="Ex. Conakry, Kindia…">
+<label>Adresse de livraison</label><textarea id="address" rows="2" placeholder="Quartier, repère…"></textarea>
+<label>Frais de livraison (GNF)</label><div id="shippingDisplay" class="notice">Frais fixés par Maïsam Shop : à confirmer</div>
+<label>Mode de paiement</label><select id="payment"><option>Orange Money (paiement manuel)</option><option>À convenir avec Maïsam Shop</option></select>
+<div class="notice">Le paiement Orange Money est effectué manuellement au <b>+224 620 50 77 67</b>. La commande n'est pas confirmée automatiquement : Maïsam Shop vérifiera le paiement.</div>
+<button class="orange" onclick="sendOrder()">Envoyer la commande sur WhatsApp</button>
+</div></section>
+<section id="contact" class="hidden"><h2>Contacter Maïsam Shop</h2><div class="panel"><p><b>WhatsApp :</b> +224 661 96 25 23</p><p><b>Orange Money :</b> +224 620 50 77 67</p><p><b>E-mail :</b> sambaabdoul95@gmail.com</p><button onclick="window.open('https://wa.me/224661962523','_blank')">Ouvrir WhatsApp</button></div></section>
+<section id="admin" class="hidden"><h2>Administration locale (prototype)</h2><div class="notice">Prototype de démonstration : les données sont conservées sur ce navigateur uniquement. Avant une vraie mise en ligne, il faudra sécuriser l'accès et connecter une base de données partagée.</div>
+<div class="panel"><label>Code administrateur de démonstration</label><input id="pin" type="password" placeholder="Code : 2468"><button onclick="unlock()">Déverrouiller</button></div>
+<div id="adminform" class="panel hidden"><h3>Frais de livraison nationale</h3><label>Frais de livraison par commande (GNF)</label><input id="shippingInput" type="number" min="0" step="1000" placeholder="Ex. 50000"><button onclick="saveShipping()">Enregistrer les frais</button><p class="muted">Tu peux modifier ce montant à tout moment depuis cet espace administrateur.</p><h3>Ajouter un produit</h3><label>Nom</label><input id="pname" placeholder="Nom du produit"><label>Catégorie</label><input id="pcat" placeholder="Routeurs, PoE, antennes…"><label>Prix (GNF)</label><input id="pprice" type="number" min="0"><label>Description</label><textarea id="pdesc"></textarea><label>Photo (facultatif)</label><input id="pimage" type="file" accept="image/*"><button onclick="addProduct()">Enregistrer le produit</button><h3>Produits enregistrés</h3><div id="adminlist"></div></div>
+</section>
+</main>
+<nav><button onclick="show('shop')">Boutique</button><button onclick="show('cart')">Panier</button><button onclick="show('contact')">Contact</button><button class="alt" onclick="show('admin')">Admin</button></nav>
+<footer>Maïsam Shop • Prototype initial — Guinée</footer>
+<script>
+const WA='224661962523';let products=JSON.parse(localStorage.getItem('ms_products')||'[]'),cart=JSON.parse(localStorage.getItem('ms_cart')||'{}'),shippingFee=Number(localStorage.getItem('ms_shipping_fee')||0);
+const money=n=>Number(n||0).toLocaleString('fr-FR')+' GNF';
+function save(){localStorage.setItem('ms_products',JSON.stringify(products));localStorage.setItem('ms_cart',JSON.stringify(cart))}
+function show(id){['shop','cart','checkout','contact','admin'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));if(id==='cart')renderCart();if(id==='admin'){renderAdmin();document.getElementById('shippingInput').value=shippingFeeValue()}if(id==='checkout')document.getElementById('shippingDisplay').textContent='Frais de livraison : '+(shippingFee?money(shippingFee):'à confirmer avec Maïsam Shop')}
+function renderProducts(){let q=(document.getElementById('search').value||'').toLowerCase(),c=document.getElementById('category').value;let cats=[...new Set(products.map(p=>p.cat).filter(Boolean))];let sel=document.getElementById('category'),old=sel.value;sel.innerHTML='<option value="">Toutes les catégories</option>'+cats.map(x=>`<option>${esc(x)}</option>`).join('');sel.value=old;let arr=products.filter(p=>(p.name+' '+p.desc).toLowerCase().includes(q)&&(!c||p.cat===c));document.getElementById('products').innerHTML=arr.length?arr.map(p=>`<article class="card"><div class="photo">${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:contain">`:'🛍️'}</div><div class="name">${esc(p.name)}</div><div class="muted">${esc(p.cat||'')}</div><div class="price">${money(p.price)}</div><div class="muted">${esc(p.desc||'')}</div><div class="actions"><button onclick="addCart(${p.id})">Ajouter</button></div></article>`).join(''):'<p class="muted">Aucun produit pour le moment. Ajoute tes articles depuis Administration.</p>'}
+function addCart(id){cart[id]=(cart[id]||0)+1;save();updateCount();alert('Produit ajouté au panier.')}
+function updateCount(){document.getElementById('count').textContent=Object.values(cart).reduce((a,b)=>a+b,0)}
+function renderCart(){let lines=Object.entries(cart).map(([id,n])=>{let p=products.find(x=>x.id==id);return p?`<div class="item"><span>${esc(p.name)} × ${n}</span><b>${money(p.price*n)}</b></div>`:''}).join('');document.getElementById('cartlines').innerHTML=lines||'Votre panier est vide.';let total=Object.entries(cart).reduce((s,[id,n])=>s+(products.find(p=>p.id==id)?.price||0)*n,0);document.getElementById('total').textContent='Total produits : '+money(total)}
+function shippingFeeValue(){return Number(localStorage.getItem('ms_shipping_fee')||0)}
+function saveShipping(){shippingFee=Number(document.getElementById('shippingFee').value||0);localStorage.setItem('ms_shipping_fee',String(shippingFee));alert('Frais de livraison enregistrés sur cet appareil.')}
+function sendOrder(){let name=customer.value.trim(),ph=phone.value.trim(),cityv=city.value.trim(),addr=address.value.trim();if(!name||!ph||!cityv||!addr){alert('Remplis ton nom, téléphone, ville et adresse.');return}let lines=Object.entries(cart).map(([id,n])=>{let p=products.find(x=>x.id==id);return p?`- ${p.name} x${n} : ${money(p.price*n)}`:''}).filter(Boolean).join('%0A');let subtotal=Object.entries(cart).reduce((s,[id,n])=>s+(products.find(p=>p.id==id)?.price||0)*n,0);let fee=shippingFeeValue();let total=subtotal+fee;let msg=`Bonjour Maïsam Shop, je souhaite commander :%0A${lines}%0A%0ASous-total produits : ${money(subtotal)}%0AFrais de livraison : ${fee?money(fee):'À confirmer'}%0ATotal estimé : ${money(total)}%0AClient : ${encodeURIComponent(name)}%0ATéléphone : ${encodeURIComponent(ph)}%0ADestination : ${encodeURIComponent(cityv)}%0AAdresse : ${encodeURIComponent(addr)}%0APaiement : Orange Money au +224620507767 (à vérifier).`;window.open(`https://wa.me/${WA}?text=${msg}`,'_blank')}
+function unlock(){if(pin.value==='2468')adminform.classList.remove('hidden');else alert('Code incorrect.')}
+function addProduct(){let name=pname.value.trim(),price=Number(pprice.value);if(!name||!price){alert('Saisis au minimum le nom et le prix.');return}let file=pimage.files[0],finish=img=>{products.push({id:Date.now(),name,cat:pcat.value.trim(),price,desc:pdesc.value.trim(),img});save();pname.value=pcat.value=pprice.value=pdesc.value='';pimage.value='';renderProducts();renderAdmin();alert('Produit ajouté.')};if(file){let r=new FileReader();r.onload=()=>finish(r.result);r.readAsDataURL(file)}else finish('')}
+function renderAdmin(){adminlist.innerHTML=products.map(p=>`<div class="item"><span>${esc(p.name)} — ${money(p.price)}</span><button class="alt" onclick="delProduct(${p.id})">Supprimer</button></div>`).join('')||'Aucun produit.'}
+function delProduct(id){if(confirm('Supprimer ce produit ?')){products=products.filter(p=>p.id!==id);delete cart[id];save();renderProducts();renderAdmin()}}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+renderProducts();updateCount();
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
